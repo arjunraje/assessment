@@ -1,0 +1,17 @@
+import { Router } from "express";
+import { loginUser, registerUser } from "../controllers/auth.controller";
+import { validateBody } from "../middlewares/body.validator.middleware";
+import { userRegisterSchema } from "../validations/auth.validation";
+import { ProductController } from "../controllers/product.controller";
+
+const routes = Router()
+
+// routes.post("/register", validateBody(userRegisterSchema), registerUser);
+// routes.post("/login", loginUser);
+
+routes.post('/createProduct',ProductController.createProduct)
+routes.get('/getAllProduct',ProductController.getAllProduct)
+routes.get('/getSingleProduct/:id',ProductController.getProductById)
+
+
+export default routes;
