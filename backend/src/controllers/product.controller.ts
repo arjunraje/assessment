@@ -45,6 +45,30 @@ export class ProductController {
         }
     }
 
-    
+    static async updateProduct(req: Request, res: Response, next: NextFunction) {
+        try {
+            
+            const productId = req.params.id;
+            const data = req.body;
+            
+            const dress = await ProductService.updateProduct(productId,data)
+            res.status(200).json(new ApiResponse(true, "Dress Updated successfully", dress))
+        } catch (error) {
+            next(error);
+            console.log(error);
+        }
+    }
+
+    static async deleteProduct(req: Request, res: Response, next: NextFunction) {
+        try {
+            const productId = req.params.id;
+            
+            const product = await ProductService.deleteProduct(productId);
+            res.status(200).json(new ApiResponse(true, "Dress Deleted successfully", product))
+        } catch (error) {
+            next(error);
+
+        }
+    }
 
 }

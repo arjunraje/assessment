@@ -12,6 +12,8 @@ const routes = Router()
 routes.post('/createProduct',ProductController.createProduct)
 routes.get('/getAllProduct',ProductController.getAllProduct)
 routes.get('/getSingleProduct/:id',ProductController.getProductById)
+routes.patch('/updateProduct/:id',ProductController.updateProduct)
+routes.delete('/deleteProduct/:id',ProductController.deleteProduct)
 
 
 export default routes;

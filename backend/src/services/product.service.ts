@@ -1,5 +1,7 @@
+import { object } from "joi";
 import { AppDataSource } from "../config/data-source";
 import { Product } from "../entities/Product.entity";
+import { assert } from "console";
 
 
 const productRepo=AppDataSource.getRepository(Product)
@@ -31,5 +33,19 @@ export class ProductService{
     static async getSingleProduct(id:string){
         const product=productRepo.findOne({where:{id}})
         return product
+    }
+
+    static async updateProduct(id:string,data:Partial<Product>){
+        const product=await productRepo.findOne({where:{id}})
+
+        Object.assign(product,data)
+
+        return await productRepo.save(product)
+    }
+
+    static async deleteProduct(id:string){
+        const product=await productRepo.findOne({where:{id}});
+
+        await productRepo.remove(product);
     }
 }

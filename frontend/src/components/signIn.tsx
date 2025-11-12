@@ -1,125 +1,199 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { createTheme } from '@mui/material/styles';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
-import { AppProvider, type Navigation } from '@toolpad/core/AppProvider';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { DemoProvider, useDemoRouter } from '@toolpad/core/internal';
+import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Alert,
+  CircularProgress,
+} from '@mui/material';
+import { Login as LoginIcon } from '@mui/icons-material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Link as MuiLink } from '@mui/material';
 
-const NAVIGATION: Navigation = [
-  {
-    kind: 'header',
-    title: 'Main items',
-  },
-  {
-    segment: 'dashboard',
-    title: 'Dashboard',
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: 'orders',
-    title: 'Orders',
-    icon: <ShoppingCartIcon />,
-  },
-  {
-    kind: 'divider',
-  },
-  {
-    kind: 'header',
-    title: 'Analytics',
-  },
-  {
-    segment: 'reports',
-    title: 'Reports',
-    icon: <BarChartIcon />,
-    children: [
-      {
-        segment: 'sales',
-        title: 'Sales',
-        icon: <DescriptionIcon />,
-      },
-      {
-        segment: 'traffic',
-        title: 'Traffic',
-        icon: <DescriptionIcon />,
-      },
-    ],
-  },
-  {
-    segment: 'integrations',
-    title: 'Integrations',
-    icon: <LayersIcon />,
-  },
-];
 
-const demoTheme = createTheme({
-  cssVariables: {
-    colorSchemeSelector: 'data-toolpad-color-scheme',
-  },
-  colorSchemes: { light: true, dark: true },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
 
-function DemoPageContent({ pathname }: { pathname: string }) {
-  return (
-    <Box
-      sx={{
-        py: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <Typography>Dashboard content for {pathname}</Typography>
-    </Box>
-  );
-}
+import type { LoginFormData } from '../types/auth';
+import { authAPI } from '../services/api';
+import { useAuthStore } from '../store/authStore';
+import axios from 'axios';
 
-interface DemoProps {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
-  window?: () => Window;
-}
+const AdminLogin: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user, isAuthenticated, setUser } = useAuthStore();
 
-export default function DashboardLayoutBasic(props: DemoProps) {
-  const { window } = props;
+  const [formData, setFormData] = useState<LoginFormData>({
+    phone_number: '',
+    password: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const router = useDemoRouter('/dashboard');
 
-  // Remove this const when copying and pasting into your project.
-  const demoWindow = window !== undefined ? window() : undefined;
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated ) {
+      
+      navigate('/products');
+    } else if (isAuthenticated) {
+      navigate('/')
+    }
+  }, [isAuthenticated, user, navigate, location]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await authAPI.login(formData);
+
+      console.log(response);
+
+      const { user, accessToken } = response.data.data;
+
+
+      // Store tokens
+      localStorage.setItem('accessToken', accessToken);
+
+      // Update auth store
+      setUser(user);
+
+      // Redirect to admin dashboard
+      const from = location.state?.from?.pathname || '/admin';
+      console.log("=====>>>>>>", from)
+      navigate(from, { replace: true });
+    } catch (error: any) {
+      setError(error.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handletest = async () => {
+    try {
+      const resp = await axios.get('http://localhost:4000')
+      console.log(resp);
+
+
+    } catch (Error: any) {
+      console.log(Error);
+
+    }
+  }
+
+  useEffect(() => {
+    handletest()
+  }, [])
 
   return (
-    // Remove this provider when copying and pasting into your project.
-    <DemoProvider window={demoWindow}>
-      {/* preview-start */}
-      <AppProvider
-        navigation={NAVIGATION}
-        router={router}
-        theme={demoTheme}
-        window={demoWindow}
+    <Container component="main" maxWidth="sm" sx={{ py: 8 }}>
+      <Paper
+        elevation={3}
+        sx={{
+          padding: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
       >
-        <DashboardLayout>
-          <DemoPageContent pathname={router.pathname} />
-        </DashboardLayout>
-      </AppProvider>
-      {/* preview-end */}
-    </DemoProvider>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            mb: 3,
+          }}
+        >
+          <LoginIcon sx={{ fontSize: 40, color: 'primary.main', mb: 2 }} />
+          <Typography component="h1" variant="h4">
+            Login
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            Sign in to access the admin dashboard
+          </Typography>
+        </Box>
+
+        {error && (
+          <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="phone_number"
+            label="phone_number"
+            name="phone_number"
+            autoComplete="phone_number"
+            autoFocus
+            value={formData.phone_number}
+            onChange={handleInputChange}
+            disabled={loading}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={formData.password}
+            onChange={handleInputChange}
+            disabled={loading}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} /> : <LoginIcon />}
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
+          </Button>
+        </Box>
+
+        <Box sx={{ mt: 2, textAlign: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            Don't have an account?{' '}
+            <MuiLink
+              component={Link}
+              to="/register"
+              sx={{
+                color: 'primary.main',
+                fontWeight: '600',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Sign up here
+            </MuiLink>
+          </Typography>
+        </Box>
+      </Paper>
+    </Container>
   );
-}
+};
+
+export default AdminLogin;
