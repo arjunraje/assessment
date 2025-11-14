@@ -7,11 +7,11 @@ import { ApiResponse } from "../utils/apiResponse";
 export class ProductController {
     static async createProduct(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = (req as any).user?.id;
             
-            const {name,price,stock,taxPercentage}=req.body;
+            
+            const {name,sku,price,currentStock,taxPercentage}=req.body;
 
-            const product = await ProductService.createProduct(name,price,stock,taxPercentage)
+            const product = await ProductService.createProduct(name,sku,price,currentStock,taxPercentage)
 
             res.status(201).json(
                 new ApiResponse(true, "Product created successfully", product)
@@ -39,7 +39,7 @@ export class ProductController {
             const id = req.params.id;
 
             const dress = await ProductService.getSingleProduct(id);
-            res.status(200).json(new ApiResponse(true, "Dress Fetch successfully", dress));
+            res.status(200).json(new ApiResponse(true, "Product Fetch successfully", dress));
         } catch (error) {
             next(error);
         }
@@ -52,7 +52,7 @@ export class ProductController {
             const data = req.body;
             
             const dress = await ProductService.updateProduct(productId,data)
-            res.status(200).json(new ApiResponse(true, "Dress Updated successfully", dress))
+            res.status(200).json(new ApiResponse(true, "Product Updated successfully", dress))
         } catch (error) {
             next(error);
             console.log(error);
@@ -64,7 +64,7 @@ export class ProductController {
             const productId = req.params.id;
             
             const product = await ProductService.deleteProduct(productId);
-            res.status(200).json(new ApiResponse(true, "Dress Deleted successfully", product))
+            res.status(200).json(new ApiResponse(true, "Product Deleted successfully", product))
         } catch (error) {
             next(error);
 

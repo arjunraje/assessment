@@ -38,7 +38,7 @@ const AdminLogin: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated ) {
       
-      navigate('/products');
+      navigate('/');
     } else if (isAuthenticated) {
       navigate('/')
     }

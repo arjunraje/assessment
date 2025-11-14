@@ -1,30 +1,39 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { InvoiceItem } from "./InvoiceItem.entity";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  OneToMany,
+} from "typeorm";
+import { PurchaseEntry } from "./Purchase.entity";
+
+import { SaleItem } from "./SaleItem.entity";
 
 
-@Entity()
-export class Product{
-    @PrimaryGeneratedColumn('uuid')
-    id:string;
+@Entity("products")
+export class Product {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @Column()
-    name:string;
+  @Column()
+  name: string;
 
-    @Column("decimal", { precision: 10, scale: 2 })
-    price: number;
+  @Column({ unique: true })
+  sku: string;
 
-    @Column("int")
-    stock: number;
+  @Column("decimal", { precision: 10, scale: 2 })
+  price: number;
 
-    @Column("decimal",{precision:10,scale:2})
-    taxPercentage:number;
+  @Column({ type: "int", default: 0 })
+  currentStock: number;
 
-    @CreateDateColumn()
-    createdAt:Date;
+  @OneToMany(() => SaleItem, (item) => item.product)
+  saleItems: SaleItem[];
 
-    @UpdateDateColumn()
-    updateAt:Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @OneToMany(()=>InvoiceItem,invoiceItem=>invoiceItem.product)
-    invoiceItem:InvoiceItem;
+  @OneToMany(() => PurchaseEntry, (purchase) => purchase.product)
+  purchases: PurchaseEntry[];
+
 }

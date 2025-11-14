@@ -2,10 +2,12 @@ import { DataSource } from "typeorm";
 import dotenv from "dotenv";
 dotenv.config();
 
-import { User } from "../entities/User.entity";
-import { Invoice } from "../entities/Invoice.entity";
-import { InvoiceItem } from "../entities/InvoiceItem.entity";
+
 import { Product } from "../entities/Product.entity";
+import { PurchaseEntry } from "../entities/Purchase.entity";
+import { Sale } from "../entities/Sales.Entity";
+import { SaleItem } from "../entities/SaleItem.entity";
+
 
 
 export const AppDataSource = new DataSource({
@@ -18,5 +20,5 @@ export const AppDataSource = new DataSource({
     synchronize: true,
     logging: false,
 
-    entities: [User,Invoice,InvoiceItem,Product],
+    entities: [PurchaseEntry,Sale,SaleItem,Product],
 });

@@ -21,7 +21,7 @@ export default function DataTable() {
 
   const [open, setOpen] =useState(false);
 
-  useEffect(()=>{
+
   const getData=async()=>{
     try{
       const response=await productApi.getProducts();
@@ -32,8 +32,9 @@ export default function DataTable() {
       console.log(error)
     }
   }
-  getData()
-},[])
+  useEffect(()=>{
+    getData()
+  },[])
 
 
 const handleChange=(e:any)=>{
@@ -54,14 +55,16 @@ const handleChange=(e:any)=>{
     event.preventDefault();
 
     productApi.creareProduct(formData)
-
+    getData();
     setFormData({
        name:'',
       price:null,
       stock:null,
       taxPercentage:null
     })
+
     handleClose();
+    
   };
   return (
     <Box>
@@ -73,7 +76,7 @@ const handleChange=(e:any)=>{
               <TableCell>Products</TableCell>
               <TableCell align="right">SKU</TableCell>
               <TableCell align="right">Price</TableCell>
-              <TableCell align="right">Stock&nbsp;(g)</TableCell>
+              <TableCell align="right">Stock</TableCell>
               <TableCell align="right">Tax</TableCell>
               <TableCell align="right">update</TableCell>
               <TableCell align="right">delete</TableCell>

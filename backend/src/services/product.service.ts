@@ -6,8 +6,8 @@ import { assert } from "console";
 
 const productRepo=AppDataSource.getRepository(Product)
 export class ProductService{
-    static async createProduct(name:string,price:number,stock:number,taxPercentage:number){
-        const newProduct=productRepo.create({name,price,stock,taxPercentage})
+    static async createProduct(name:string,sku:string,price:number,currentStock:number,taxPercentage:number){
+        const newProduct=productRepo.create({name,sku,price,currentStock,taxPercentage})
         return await productRepo.save(newProduct);
     }
 
@@ -48,4 +48,16 @@ export class ProductService{
 
         await productRepo.remove(product);
     }
+
+
+    static async adjustStock(id: string, amount: number) {
+        const product = await productRepo.findOneBy({ id });
+        if (!product) throw new Error("Product not found");
+
+        const newStock = product.currentStock + amount;
+        if (newStock < 0) throw new Error("Insufficient stock");
+
+        product.currentStock = newStock;
+        return productRepo.save(product);
+  }
 }
