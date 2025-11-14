@@ -164,6 +164,17 @@ export const productApi={
 
   creareProduct:(formData:any)=>
     api.post('/product/createProduct',formData)
+
+}
+
+export const saleApi={
+  createSale:(formData:any)=>
+    api.post('/sale/createSale',formData)
+}
+
+export const purchaseApi={
+  createPurchase:(formData:any)=>
+    api.post('/purchase/createPurchase',formData)
 }
 
 // Utility function to clear auth state

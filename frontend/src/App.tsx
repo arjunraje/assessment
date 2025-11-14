@@ -5,6 +5,8 @@ import Home from './pages/Home'
 import Products from './pages/Products'
 import SignInPage from './components/signIn'
 import ResponsiveAppBar from './components/ResponsiveAppBar'
+import CreateSale from './pages/CreateSale'
+import PurchasePage from './pages/Purchase';
 
 
 const App = () => {
@@ -14,9 +16,9 @@ const App = () => {
     <Routes>
       
       <Route path="/" element={<Products />} />
-      
-      {/* <Route path="/products/:id" element={<ProductDetail />} /> */}
       <Route path="/login" element={<SignInPage />} /> 
+      <Route path="/sale" element={<CreateSale/>} /> 
+      <Route path="/purchase" element={<PurchasePage/>} /> 
     </Routes>
     </>
    

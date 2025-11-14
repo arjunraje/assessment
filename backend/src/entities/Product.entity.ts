@@ -24,6 +24,9 @@ export class Product {
   @Column("decimal", { precision: 10, scale: 2 })
   price: number;
 
+  @Column("decimal", { precision: 5, scale: 2 })
+  taxPercentage: number;
+
   @Column({ type: "int", default: 0 })
   currentStock: number;
 

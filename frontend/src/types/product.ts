@@ -16,9 +16,11 @@ export interface ProductResponse{
 export interface Product{
     id: string,
     name: string,
+    sku:string,
     price:number,
-    stock: number,
+    currentStock: number,
     taxPercentage:number,
     createdAt: Date,
     updateAt: Date
 }
+
